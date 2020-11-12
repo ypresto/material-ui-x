@@ -9,9 +9,17 @@ import {
 } from '../../../constants/eventsConstants';
 import { ApiRef } from '../../../models/api/apiRef';
 import { CellIndexCoordinates } from '../../../models/cell';
-import { findParentElementFromClassName, getIdFromRowElem, isCell } from '../../../utils/domUtils';
+import {
+  findParentElementFromClassName,
+  getIdFromRowElem,
+  isButtonElement,
+  isCell,
+  isInputElement,
+  isSelectElement,
+} from '../../../utils/domUtils';
 import {
   isArrowKeys,
+  isArrowUpOrDownKeys,
   isHomeOrEndKeys,
   isMultipleKey,
   isNavigationKey,
@@ -232,32 +240,53 @@ export const useKeyboard = (gridRootRef: React.RefObject<HTMLDivElement>, apiRef
         return;
       }
 
-      if (!isTabKey(event.code)) {
-        // WE prevent default behavior for all key shortcut except tab when the current active element is a cell
-        event.preventDefault();
-        event.stopPropagation();
+      if (isTabKey(event.code)) {
+        return;
+      }
+
+      if (isInputElement(document.activeElement)) {
+        // Do not disturb user's focus.
+        return;
       }
 
       if (isSpaceKey(event.code) && event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
         selectActiveRow();
         return;
       }
 
+      if (isSpaceKey(event.code) && isButtonElement(document.activeElement)) {
+        return;
+      }
+
+      if ((isSpaceKey(event.code) || isArrowUpOrDownKeys(event.code)) && isSelectElement(document.activeElement)) {
+        return;
+      }
+
       if (isNavigationKey(event.code) && !event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
         navigateCells(event.code, event.ctrlKey || event.metaKey);
         return;
       }
       if (isNavigationKey(event.code) && event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
         expandSelection(event.code);
         return;
       }
 
       if (event.key.toLowerCase() === 'c' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        event.stopPropagation();
         handleCopy();
         return;
       }
 
       if (event.key.toLowerCase() === 'a' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        event.stopPropagation();
         apiRef.current.selectRows(apiRef.current.getAllRowIds(), true);
       }
     },

@@ -3,6 +3,7 @@ export const isMultipleKey = (code: string): boolean => MULTIPLE_SELECTION_KEYS.
 export const isTabKey = (code: string): boolean => code === 'Tab';
 export const isSpaceKey = (code: string): boolean => code === 'Space';
 export const isArrowKeys = (code: string): boolean => code.indexOf('Arrow') === 0;
+export const isArrowUpOrDownKeys = (code: string): boolean => code === 'ArrowUp' || code === 'ArrowDown';
 export const isHomeOrEndKeys = (code: string): boolean => code === 'Home' || code === 'End';
 export const isPageKeys = (code: string): boolean => code.indexOf('Page') === 0;
 

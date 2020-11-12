@@ -17,6 +17,18 @@ export function isCell(elem: Element | null): boolean {
   return elem != null && findParentElementFromClassName(elem, CELL_CSS_CLASS) !== null;
 }
 
+export function isInputElement(elem: Element | null): boolean {
+  return elem != null && (elem instanceof HTMLInputElement && !['button', 'submit', 'reset'].includes(elem.type) || elem instanceof HTMLTextAreaElement);
+}
+
+export function isButtonElement(elem: Element | null): boolean {
+  return elem != null && (elem instanceof HTMLButtonElement || (elem instanceof HTMLInputElement && ['button', 'submit', 'reset'].includes(elem.type)) || elem.getAttribute('role') === 'button')
+}
+
+export function isSelectElement(elem: Element | null): boolean {
+  return elem != null && (elem instanceof HTMLSelectElement || elem.classList.contains('MuiSelect-root'))
+}
+
 export function isHeaderCell(elem: Element): boolean {
   return elem && findParentElementFromClassName(elem, HEADER_CELL_CSS_CLASS) !== null;
 }
