@@ -32,6 +32,7 @@ export const Viewport: ViewportType = React.forwardRef<HTMLDivElement, {}>(
     const containerSizes = useGridSelector(apiRef, containerSizesSelector);
     const viewportSizes = useGridSelector(apiRef, viewportSizesSelector);
     const scrollBarState = useGridSelector(apiRef, scrollBarSizeSelector);
+    const hasScroll = React.useMemo(() => ({ y: scrollBarState!.hasScrollY, x: scrollBarState.hasScrollX }), [scrollBarState])
     const columns = useGridSelector(apiRef, columnsSelector);
     const cellFocus = useGridSelector(apiRef, keyboardCellSelector);
     const selectionState = useGridSelector(apiRef, selectionStateSelector);
@@ -53,7 +54,7 @@ export const Viewport: ViewportType = React.forwardRef<HTMLDivElement, {}>(
             row={r}
             firstColIdx={renderCtx.firstColIdx}
             lastColIdx={renderCtx.lastColIdx}
-            hasScroll={{ y: scrollBarState!.hasScrollY, x: scrollBarState.hasScrollX }}
+            hasScroll={hasScroll}
             scrollSize={options.scrollbarSize}
             showCellRightBorder={!!options.showCellRightBorder}
             extendRowFullWidth={!options.disableExtendRowFullWidth}
