@@ -11,9 +11,11 @@ import { InternalRowsState } from './rowsState';
 export function convertRowsPropToState({
   rows,
   totalRowCount,
+  prevState,
 }: {
   rows: RowsProp;
   totalRowCount?: number;
+  prevState: InternalRowsState
 }): InternalRowsState {
   const state: InternalRowsState = {
     allRows: [],
@@ -21,7 +23,8 @@ export function convertRowsPropToState({
     totalRowCount: totalRowCount && totalRowCount > rows.length ? totalRowCount : rows.length,
   };
   rows.forEach((rowData) => {
-    const rowModel = createRowModel(rowData);
+    const prevRowModel = prevState.idRowsLookup[rowData.id]
+    const rowModel = prevRowModel?.data === rowData ? prevRowModel : createRowModel(rowData);
     state.allRows.push(rowData.id);
     state.idRowsLookup[rowModel.id] = rowModel;
   });
@@ -54,6 +57,7 @@ export const useRows = (rows: RowsProp, apiRef: ApiRef): void => {
       internalRowsState.current = convertRowsPropToState({
         rows,
         totalRowCount: state.options.rowCount,
+        prevState: internalRowsState.current
       });
       return { ...state, rows: internalRowsState.current };
     });
@@ -70,8 +74,8 @@ export const useRows = (rows: RowsProp, apiRef: ApiRef): void => {
       const allRows = allNewRows.map((row) => row.id);
       const totalRowCount =
         gridState.options &&
-        gridState.options.rowCount &&
-        gridState.options.rowCount > allRows.length
+          gridState.options.rowCount &&
+          gridState.options.rowCount > allRows.length
           ? gridState.options.rowCount
           : allRows.length;
 
