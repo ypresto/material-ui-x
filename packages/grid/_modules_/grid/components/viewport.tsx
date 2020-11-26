@@ -9,12 +9,10 @@ import { useLogger } from '../hooks/utils/useLogger';
 import { optionsSelector } from '../hooks/utils/useOptionsProp';
 import { RenderContextProps } from '../models/renderContextProps';
 import { ApiContext } from './api-context';
-import { LeftEmptyCell, RightEmptyCell } from './cell';
 import { RenderContext } from './render-context';
 import { RenderingZone } from './rendering-zone';
-import { Row } from './row';
-import { RowCells } from './row-cells';
 import { StickyContainer } from './sticky-container';
+import { RowElements } from './row-elements';
 
 type ViewportType = React.ForwardRefExoticComponent<React.RefAttributes<HTMLDivElement>>;
 
@@ -41,29 +39,17 @@ export const Viewport: ViewportType = React.forwardRef<HTMLDivElement, {}>(
       // TODO move that to selector
       const renderedRows = rows.slice(renderCtx.firstRowIdx, renderCtx.lastRowIdx!);
       return renderedRows.map((r, idx) => (
-        <Row
-          className={(renderCtx.firstRowIdx! + idx) % 2 === 0 ? 'Mui-even' : 'Mui-odd'}
+        <RowElements
           key={r.id}
-          id={r.id}
+          row={r}
+          domIndex={idx}
+          renderCtx={renderCtx}
+          options={options}
+          columns={columns.visible}
+          cellFocus={cellFocus}
+          hasScroll={hasScroll}
           selected={!!selectionState[r.id]}
-          rowIndex={renderCtx.firstRowIdx + idx}
-        >
-          <LeftEmptyCell width={renderCtx.leftEmptyWidth} />
-          <RowCells
-            columns={columns.visible}
-            row={r}
-            firstColIdx={renderCtx.firstColIdx}
-            lastColIdx={renderCtx.lastColIdx}
-            hasScroll={hasScroll}
-            scrollSize={options.scrollbarSize}
-            showCellRightBorder={!!options.showCellRightBorder}
-            extendRowFullWidth={!options.disableExtendRowFullWidth}
-            rowIndex={renderCtx.firstRowIdx + idx}
-            cellFocus={cellFocus}
-            domIndex={idx}
-          />
-          <RightEmptyCell width={renderCtx.rightEmptyWidth} />
-        </Row>
+        />
       ));
     };
 
